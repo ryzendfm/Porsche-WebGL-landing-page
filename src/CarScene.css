@@ -591,6 +591,33 @@ body {
   color: var(--metal);
 }
 
+.footer-col.developer-info {
+  margin-left: auto;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.porsche-text {
+  font-family: "Porscha", var(--font-body);
+  font-size: 1.15em;
+  letter-spacing: 0.04em;
+  color: var(--paper);
+  margin-left: 0.2rem;
+}
+
+.footer-link {
+  color: var(--metal);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0.1rem;
+}
+
+.footer-link:hover {
+  color: var(--paper);
+}
+
 .footer-disclaimer {
   width: 100%;
   font-size: 0.75rem;
@@ -854,5 +881,11 @@ body::-webkit-scrollbar {
 
   .heritage-footage {
     height: 34vh;
+  }
+
+  .footer-col.developer-info {
+    margin-left: 0;
+    align-items: flex-start;
+    text-align: left;
   }
 }
