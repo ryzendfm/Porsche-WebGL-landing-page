@@ -412,6 +412,80 @@ export default function CarScene() {
   const canvasLayerRef = useRef(null);
   useHeroBackdrop(progress, canvasLayerRef);
 
+  useEffect(() => {
+    let activeTween = null;
+
+    const handleKeyDown = (e) => {
+      if (
+        document.activeElement &&
+        (document.activeElement.tagName === "INPUT" ||
+          document.activeElement.tagName === "TEXTAREA" ||
+          document.activeElement.isContentEditable)
+      ) {
+        return;
+      }
+
+      if (e.code === "Space") {
+        e.preventDefault();
+
+        const isShift = e.shiftKey;
+        const currentScroll = window.scrollY;
+        const vh = window.innerHeight;
+        
+        let targetIndex;
+        if (isShift) {
+          // Go to previous section
+          targetIndex = Math.max(0, Math.ceil(currentScroll / vh) - 1);
+        } else {
+          // Go to next section
+          targetIndex = Math.min(SECTION_COUNT - 1, Math.floor(currentScroll / vh) + 1);
+        }
+
+        const targetY = targetIndex * vh;
+
+        if (activeTween) {
+          activeTween.kill();
+        }
+
+        const scrollObj = { y: currentScroll };
+        activeTween = gsap.to(scrollObj, {
+          y: targetY,
+          duration: prefersReducedMotion ? 0 : 1.1, // Smooth, not too fast, not too slow
+          ease: "power2.inOut",
+          onUpdate: () => {
+            window.scrollTo(0, scrollObj.y);
+          },
+          onComplete: () => {
+            activeTween = null;
+          }
+        });
+      }
+    };
+
+    const killActiveTween = () => {
+      if (activeTween) {
+        activeTween.kill();
+        activeTween = null;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("wheel", killActiveTween, { passive: true });
+    window.addEventListener("touchmove", killActiveTween, { passive: true });
+    window.addEventListener("mousedown", killActiveTween, { passive: true });
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("wheel", killActiveTween);
+      window.removeEventListener("touchmove", killActiveTween);
+      window.removeEventListener("mousedown", killActiveTween);
+      if (activeTween) {
+        activeTween.kill();
+      }
+    };
+  }, []);
+
+
   return (
     <>
       <Preloader />
